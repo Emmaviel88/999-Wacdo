@@ -1,4 +1,19 @@
-<div>
-  <h1>{{title()}}</h1>
+<div class="app-container">
+  <!-- Header 
+  <div class="header">
+    <h1>{{title()}}</h1>
+  </div>
+  -->
+  
+  <div class="map-section">
+    <div class="map-wrapper">
+      <app-map></app-map>
+      
+      <div class="search-section">
+        <commune-list></commune-list>
+      </div>
+    </div>
+  </div>
+  
+  <router-outlet />
 </div>
-<router-outlet />

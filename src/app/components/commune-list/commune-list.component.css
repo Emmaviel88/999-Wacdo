@@ -1,0 +1,31 @@
+.commune-list { padding: 0.5rem; }
+.commune-list ul { list-style: none; padding: 0; margin: 0.5rem 0 0 0; border: 1px solid #ddd; border-radius: 4px; }
+.commune-list li { padding: 0.5rem; cursor: pointer; }
+.commune-list li:hover,
+.commune-list li.active { background-color: #eef6ff; }
+.commune-list label { margin-left: 0.7rem; }
+.no-suggestions { padding: 0.5rem; color: #ff0000; font-style: italic; }
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* espace entre label / input / bouton */
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+.search-wrapper input {
+  flex: 1;        /* prend tout l’espace dispo */
+  max-width: 90%; /* limite à 80% */
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px; 
+}
+
+.search-wrapper button {
+  padding: 4px 8px;
+  font-size: 16px;
+  background-color: #fffc5c;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

@@ -1,0 +1,55 @@
+<div class="commune-list">
+    <label for="commune-search">Rechercher un restaurant : </label>
+    <div class="search-wrapper">
+        <input
+            id="commune-search"
+            type="text"
+            [formControl]="searchControl"
+            placeholder="Saisissez au moins 3 caractères"
+        />
+
+        <button
+            type="button"
+            (click)="searchPOI()"
+            [disabled]="!selectedCoords"
+        >
+            🔍
+        </button>
+    </div>
+  @if (selectedCoords) {
+    <div class="coordinates">
+      <p>
+        <strong>Coordonnées:</strong>
+        [{{ selectedCoords.lat }}, {{ selectedCoords.lon }}]
+      </p>
+    </div>
+  }
+
+  @if (suggestions$ | async; as suggestions) {
+    <div class="suggestions">
+
+      @if (suggestions.length > 0) {
+        <ul>
+          @for (commune of suggestions; track commune.code; let i = $index) {
+            <li
+              [class.active]="i === selectedIndex"
+              (mouseenter)="highlight(i)"
+              (mouseleave)="highlight(-1)"
+              (click)="selectSuggestion(commune)"
+            >
+              {{ commune.nom }}
+              ({{ commune.codesPostaux?.[0] || commune.code }})
+            </li>
+          }
+        </ul>
+      } 
+      <!--@else {
+        <p class="no-suggestions">
+          Aucune suggestion.
+        </p>
+    }
+    -->
+
+    </div>
+  }
+</div>
