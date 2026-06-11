@@ -6,16 +6,19 @@
             type="text"
             [formControl]="searchControl"
             placeholder="Saisissez au moins 3 caractères"
+            autocomplete="off"
         />
 
         <button
             type="button"
             (click)="searchPOI()"
-            [disabled]="!selectedCoords"
+            [disabled]="!(center$ | async)"
         >
             🔍
         </button>
     </div>
+  
+    <!--
   @if (selectedCoords) {
     <div class="coordinates">
       <p>
@@ -24,6 +27,7 @@
       </p>
     </div>
   }
+  -->
 
   @if (suggestions$ | async; as suggestions) {
     <div class="suggestions">

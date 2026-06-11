@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { POI } from '../models/poi';
 
 export const setMapCenter = createAction(
   '[Map] Set Center',
@@ -7,4 +8,9 @@ export const setMapCenter = createAction(
 
 export const clearMapCenter = createAction(
   '[Map] Clear Center'
+);
+
+export const setPoiResults = createAction(
+  '[POI] Set Results',
+  props<{ pois: POI[] }> ()
 );

@@ -1,8 +1,8 @@
 .commune-list { padding: 0.5rem; }
 .commune-list ul { list-style: none; padding: 0; margin: 0.5rem 0 0 0; border: 1px solid #ddd; border-radius: 4px; }
-.commune-list li { padding: 0.5rem; cursor: pointer; }
+.commune-list li { padding: 0.5rem; cursor: pointer; border:solid 1px black; border-radius: 4px; margin-bottom: 0.5rem; background-color: #f9f9f9; }
 .commune-list li:hover,
-.commune-list li.active { background-color: #eef6ff; }
+.commune-list li.active { background-color: #0c7cfd; color: white; }
 .commune-list label { margin-left: 0.7rem; }
 .no-suggestions { padding: 0.5rem; color: #ff0000; font-style: italic; }
 .search-wrapper {
@@ -24,7 +24,7 @@
 .search-wrapper button {
   padding: 4px 8px;
   font-size: 16px;
-  background-color: #fffc5c;
+  background-color: rgb(251 191 36/var(--tw-bg-opacity,1));;
     border: none;
     border-radius: 4px;
     cursor: pointer;

@@ -19,10 +19,8 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
+              "src/assets",
+              "public"
             ],
             "styles": [
               "node_modules/leaflet/dist/leaflet.css",
