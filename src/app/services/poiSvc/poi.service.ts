@@ -1,4 +1,4 @@
-import { Injectable, Service } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { POI } from '../../models/poi';
 import { BehaviorSubject, Observable } from 'rxjs';
 
