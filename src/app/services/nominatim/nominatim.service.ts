@@ -52,6 +52,10 @@ export class NominatimService {
         params
       }).pipe(
         switchMap((results: any[]) => {
+          if(!results || results.length === 0) {
+            alert(`Aucun restaurant n'a été trouvé à proximité`);
+            return of([]);
+          }
           return of(results.map((result, index) => ({
             id: index,
             name: result.display_name.split(',')[0] || 'McDonald\s',

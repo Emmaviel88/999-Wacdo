@@ -1,7 +1,23 @@
 <div class="map-wrapper">
   <div id="map" class="map-container"></div>
+  
+  <div class="poi-details-overlay">
+    @let poi = (poiService.selectedPoi$ | async);
 
-  <div class="poi-overlay">
-    Aucun POI sélectionné
+    @if (poi) {
+      <h3>{{ poi.name }}</h3>
+      <p>
+        Adresse : {{ poi.address?.road }},
+        {{ poi.address?.city }} - {{ poi.address?.postcode }}
+      </p>
+      <p>Tél. : {{ poi.details?.phone }}</p>
+      <p>Horaires : {{ poi.details?.openHours }}</p>
+      <p>🌐 : <a href="{{ poi.details?.website }}" target="_blank" rel="noopener noreferrer">{{ poi.details?.website }}</a></p>
+      <br>
+      <button>Continuer</button>
+    } @else {
+      <p>Aucun POI sélectionné</p>
+    }
   </div>
+  
 </div>

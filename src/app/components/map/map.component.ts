@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { selectMapCenter } from '../../store/map.selectors';
@@ -6,6 +6,7 @@ import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 import { PoiStreamService } from '../../services/poiStream/poi-stream.service';
 import { POI } from '../../models/poi';
+import { PoiService } from '../../services/poiSvc/poi.service';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -26,10 +27,15 @@ export class MapComponent implements OnInit, OnDestroy {
   private map!: L.Map;
   private marker: L.Marker | null = null;
   private sub?: Subscription;
+  private centerLayer = L.layerGroup();
   private poiLayer = L.layerGroup();
-  private poiMarkers: L.Marker[] = [];
 
-  constructor(private store: Store, private poiStream: PoiStreamService) {}
+  constructor(private store: Store, 
+              private poiStream: PoiStreamService, 
+              private ngZone: NgZone,
+              private cdr: ChangeDetectorRef,
+              public poiService: PoiService
+            ) {}
   
   public macDoIcon = L.icon({
     iconUrl: 'assets/mcdonalds.ico',
@@ -39,8 +45,6 @@ export class MapComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    console.log('🔥 MAP ONINIT CALLED');
-    
     this.map = L.map('map').setView([46.2276, 2.2137], 6);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
@@ -48,23 +52,16 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.poiLayer.addTo(this.map);
 
-    console.log('🧪 BEFORE SUBSCRIBE POI');
+    this.centerLayer.addTo(this.map);
 
     this.poiStream.poi$.subscribe(pois => {
       console.log('🍔 MAP RECEIVED POIS >>>', pois);
       console.log('MAP EXISTS:', !!this.map);
-      
+
       if(!this.map) return;
 
-      this.clearPoiMarkers();
       this.addPoiMarkers(pois);
     })
-
-    console.log('🧪 AFTER SUBSCRIBE POI');
-
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //   attribution: '&copy; OpenStreetMap contributors'
-    // }).addTo(this.map);
 
     this.sub = this.store.select(selectMapCenter).subscribe(center => {
       if (!this.map) {
@@ -74,7 +71,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
       if (!center) {
         console.log('🧹 CLEAR MARKER');
-        this.clearMarker();
+        this.centerLayer.clearLayers();
         return;
       }
       console.log('🚀 CENTERING MAP');
@@ -83,33 +80,19 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private centerMapOnCoords(center: { lat: number; lon: number }): void {
+
+    this.poiLayer.clearLayers();
+
     this.map.setView([center.lat, center.lon], 9);
 
-    this.clearMarker();
+    this.centerLayer.clearLayers();
 
-    this.marker = L.marker([center.lat, center.lon])
-      // .bindPopup(
-      //   `Lat: ${center.lat.toFixed(4)}<br>Lon: ${center.lon.toFixed(4)}`
-      // )
-      .addTo(this.map);
-      // .openPopup();
-  }
-
-  private clearMarker(): void {
-    if (this.marker) {
-      this.map.removeLayer(this.marker);
-      this.marker = null;
-    }
+    this.marker = L.marker([center.lat, center.lon]).addTo(this.centerLayer);
   }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
     this.map?.remove();
-  }
-
-  private clearPoiMarkers(): void {
-    this.poiMarkers.forEach(m => this.map?.removeLayer(m));
-    this.poiMarkers = [];
   }
 
   private addPoiMarkers(pois: POI[]): void {
@@ -119,24 +102,46 @@ export class MapComponent implements OnInit, OnDestroy {
 
     const bounds: L.LatLngExpression[] = [];
 
-    // console.log('👉 ADD MARKERS CALLED', pois);
     pois.forEach(poi => {
       const marker = L.marker([poi.lat, poi.lon], {
         icon: this.macDoIcon
       });
-      // .addTo(this.map!);
+
+      const popupContent = `<div>
+                             <strong>${poi.name}</strong><br>
+                             ${poi.address?.postcode} - ${poi.address?.city}<br><br>
+                             <button class="select-poi-btn"
+                             data-poi-id="${poi.id}">
+                             Choisir
+                             </button>
+                           </div>`
       
-      marker.bindPopup(`${ poi.name } - ${ poi.address?.city }`)
+      marker.bindPopup(popupContent);
 
-      // console.log('marker coords:', poi.lat, poi.lon);
+      marker.on('popupopen', (e) => {
+        const container = e.popup.getElement();
+        const btn = container?.querySelector(
+          `.select-poi-btn[data-poi-id="${poi.id}"]`
+        );
 
-      // markers.push([poi.lat, poi.lon]);
-      this.poiLayer.addLayer(marker);
+        btn?.addEventListener('click', () => {
+          this.ngZone.run(() => {
+            this.selectPoi(poi);
+            // ✅ fermer le popup Leaflet
+            this.map.closePopup();
+          });
+        });
+      });
 
-      this.poiMarkers.push(marker);
+      // this.poiLayer.addLayer(marker);
+      marker.addTo(this.poiLayer);
 
       bounds.push([poi.lat, poi.lon]);
     });
+
+    if(bounds.length === 0) {
+      return;
+    }
 
     if (bounds.length === 1) {
       this.map.setView(bounds[0], 14);
@@ -147,20 +152,21 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  private showPois(pois: any[]): void {
-    if (!this.map) return;
+  private selectPoi(poi: POI) {
+    // console.log('map selectPoi:', poi);
 
-    this.clearPoiMarkers();
+    // this.ngZone.run(() => {
+    //   this.poiService.selectPoi(poi);
+    //   this.cdr.detectChanges();
+    // });
+      console.log('MAP SELECT', poi);
 
-    pois.forEach(poi => {
-      const marker = L.marker([poi.lat, poi.lon])
-        .bindPopup(`
-          <b>${poi.name}</b><br/>
-          ${poi.address?.road || ''} ${poi.address?.city || ''}
-        `)
-        .addTo(this.map!);
+      this.poiService.selectPoi(poi);
+      this.cdr.detectChanges();
 
-      this.poiMarkers.push(marker);
+      this.poiService.selectedPoi$.subscribe(poi => {
+        console.log('MAP SERVICE VALUE', poi);
     });
   }
+
 }

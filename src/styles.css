@@ -24,4 +24,21 @@ app-root {
   height: 100%;
 }
 
+.leaflet-popup-content {
+  text-align: center; /* centre tout le contenu du popup */
+}
 
+.select-poi-btn {
+  background-color: rgb(251 191 36);
+  color: black;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.select-poi-btn:hover {
+  background-color: rgb(245 158 11); /* un jaune un peu plus foncé */
+}

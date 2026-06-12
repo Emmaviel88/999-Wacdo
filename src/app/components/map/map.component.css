@@ -20,12 +20,40 @@
 
   padding: 12px;
 
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(204, 204, 204, 0.9);
   border-radius: 12px 12px 0 0;
 
   text-align: center;
 
-  z-index: 1000;
+  z-index: 10000;
 
   pointer-events: none;
+}
+
+.poi-details-overlay{
+  padding: 12px 12px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%);
+  width: 80%;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 10000;
+}
+
+.poi-details-overlay button {
+  border-radius: 8px;
+  background-color: rgb(251 191 36);
+  color: black;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+.poi-details-overlay button:hover {
+  background-color: rgb(245 158 11);
 }

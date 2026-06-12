@@ -10,6 +10,7 @@ import { NominatimService } from '../../services/nominatim/nominatim.service';
 import { clearMapCenter, setMapCenter, setPoiResults } from '../../store/map.actions';
 import { selectMapCenter } from '../../store/map.selectors';
 import { PoiStreamService } from '../../services/poiStream/poi-stream.service';
+import { PoiService } from '../../services/poiSvc/poi.service';
 
 @Component({
   selector: 'commune-list',
@@ -32,13 +33,26 @@ export class CommuneListComponent {
   @Output() center = new EventEmitter<{ lat: number; lon: number }>();
   
 
-  constructor(private communeService: CommuneService, private nominatim: NominatimService, private cdr: ChangeDetectorRef, private ngZone: NgZone, private store: Store, private poiStream: PoiStreamService) {
+  constructor(private communeService: CommuneService, 
+              private nominatim: NominatimService, 
+              private cdr: ChangeDetectorRef, 
+              private ngZone: NgZone, 
+              private store: Store, 
+              private poiStream: PoiStreamService, 
+              private poiService: PoiService) {
     this.center$ = this.store.select(selectMapCenter); // 👈 ICI (AJOUT)
  
     const search$ = this.searchControl.valueChanges.pipe(
       tap(() => {
+        console.log('🧹 CLEAR SEARCH');
+        
         this.selectedCoords = null;
         this.store.dispatch(clearMapCenter());
+
+        this.poiService.clear();
+        this.poiStream.emit([]);
+
+        this.cdr.detectChanges();
       }),  // Reset coords when user types
       startWith<string | null>(''),
       debounceTime(300),
@@ -47,6 +61,7 @@ export class CommuneListComponent {
         const query = (value ?? '').trim();
         return query.length >= 3 ? this.communeService.searchCommunes(query, 10) : of([]);
       })
+      
     );
 
     this.suggestions$ = merge(this.suggestionsTrigger.asObservable(), search$);
@@ -62,6 +77,11 @@ export class CommuneListComponent {
     this.searchControl.setValue(commune.nom, { emitEvent: false });
     this.suggestionsTrigger.next([]);
 
+    
+    // 🔥 IMPORTANT RESET CONTEXTE
+    this.poiService.clear();
+    this.poiStream.emit([]);
+    
     const postal =
       commune.codesPostaux?.length ? commune.codesPostaux[0] : '';
 
