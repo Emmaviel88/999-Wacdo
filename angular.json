@@ -56,10 +56,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "999-Wacdo:build:production"
+              "buildTarget": "999-wacdo:build:production"
             },
             "development": {
-              "buildTarget": "999-Wacdo:build:development"
+              "buildTarget": "999-wacdo:build:development"
             }
           },
           "defaultConfiguration": "development"
