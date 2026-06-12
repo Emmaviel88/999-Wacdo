@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "999-Wacdo": {
+    "999-wacdo": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -16,6 +16,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/999-wacdo",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
