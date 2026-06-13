@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { PoiStreamService } from '../../services/poiStream/poi-stream.service';
 import { POI } from '../../models/poi';
 import { PoiService } from '../../services/poiSvc/poi.service';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -19,7 +20,7 @@ L.Icon.Default.mergeOptions({
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LeafletModule],
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
@@ -29,6 +30,16 @@ export class MapComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
   private centerLayer = L.layerGroup();
   private poiLayer = L.layerGroup();
+
+  options: L.MapOptions = {
+    layers: [
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      })
+    ],
+    zoom: 6,
+    center: L.latLng(46.2276, 2.2137)
+  };
 
   constructor(private store: Store, 
               private poiStream: PoiStreamService, 
@@ -45,14 +56,13 @@ export class MapComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.map = L.map('map').setView([46.2276, 2.2137], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);  
-
-    this.poiLayer.addTo(this.map);
-
-    this.centerLayer.addTo(this.map);
+    // Supprimé pour l'ajout de ngx-leaflet
+    // this.map = L.map('map').setView([46.2276, 2.2137], 6);
+    //   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //   attribution: '&copy; OpenStreetMap contributors'
+    // }).addTo(this.map);  
+    // this.poiLayer.addTo(this.map);
+    // this.centerLayer.addTo(this.map);
 
     this.poiStream.poi$.subscribe(pois => {
       console.log('🍔 MAP RECEIVED POIS >>>', pois);
@@ -65,7 +75,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.sub = this.store.select(selectMapCenter).subscribe(center => {
       if (!this.map) {
-        console.log('❌ MAP NOT READY');  
+        // Supprrimé à l'intégration de ngx-leaflet
+        // console.log('❌ MAP NOT READY');  
+        console.log('⏳ Waiting for map initialization');
         return;
       }
 
@@ -167,6 +179,14 @@ export class MapComponent implements OnInit, OnDestroy {
       this.poiService.selectedPoi$.subscribe(poi => {
         console.log('MAP SERVICE VALUE', poi);
     });
+  }
+
+  // Ajouté pour ngx-leaflet
+  onMapReady(map: L.Map): void {
+    this.map = map;
+
+    this.poiLayer.addTo(this.map);
+    this.centerLayer.addTo(this.map);
   }
 
 }

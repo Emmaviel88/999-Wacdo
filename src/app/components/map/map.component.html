@@ -1,5 +1,11 @@
 <div class="map-wrapper">
-  <div id="map" class="map-container"></div>
+  <!--<div id="map" class="map-container"></div>-->
+  <div
+    class="map-container"
+    leaflet
+    [leafletOptions]="options"
+    (leafletMapReady)="onMapReady($event)">
+  </div>
   
   <div class="poi-details-overlay">
     @let poi = (poiService.selectedPoi$ | async);
