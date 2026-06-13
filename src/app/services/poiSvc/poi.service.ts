@@ -12,11 +12,11 @@ export class PoiService {
     selectedPoi$ = this.selectedPoiSubject.asObservable();
 
     selectPoi(poi: POI) {
-    this.selectedPoiSubject.next(poi);
+        this.selectedPoiSubject.next(poi);
     }
 
     clear() {
-    this.selectedPoiSubject.next(null);
+        this.selectedPoiSubject.next(null);
     }
 }
 

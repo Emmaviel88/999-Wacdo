@@ -165,12 +165,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private selectPoi(poi: POI) {
-    // console.log('map selectPoi:', poi);
-
-    // this.ngZone.run(() => {
-    //   this.poiService.selectPoi(poi);
-    //   this.cdr.detectChanges();
-    // });
       console.log('MAP SELECT', poi);
 
       this.poiService.selectPoi(poi);
@@ -187,6 +181,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.poiLayer.addTo(this.map);
     this.centerLayer.addTo(this.map);
+  }
+
+  closePoiDetails(): void {
+    this.poiService.clear();
   }
 
 }

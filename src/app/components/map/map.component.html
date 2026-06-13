@@ -20,7 +20,7 @@
       <p>Horaires : {{ poi.details?.openHours }}</p>
       <p>🌐 : <a href="{{ poi.details?.website }}" target="_blank" rel="noopener noreferrer">{{ poi.details?.website }}</a></p>
       <br>
-      <button>Continuer</button>
+      <button (click)="closePoiDetails()">Continuer</button>
     } @else {
       <p>Aucun POI sélectionné</p>
     }
