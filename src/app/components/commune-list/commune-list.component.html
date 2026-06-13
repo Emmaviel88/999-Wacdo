@@ -19,16 +19,11 @@
         </button>
     </div>
   
-    <!--
-  @if (selectedCoords) {
-    <div class="coordinates">
-      <p>
-        <strong>Coordonnées:</strong>
-        [{{ selectedCoords.lat }}, {{ selectedCoords.lon }}]
-      </p>
+  @if (loadingPois$ | async) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
     </div>
   }
-  -->
 
   @if (suggestions$ | async; as suggestions) {
     <div class="suggestions">

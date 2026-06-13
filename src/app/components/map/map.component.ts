@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { selectMapCenter } from '../../store/map.selectors';
 import * as L from 'leaflet';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { PoiStreamService } from '../../services/poiStream/poi-stream.service';
 import { POI } from '../../models/poi';
 import { PoiService } from '../../services/poiSvc/poi.service';
@@ -30,7 +30,8 @@ export class MapComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
   private centerLayer = L.layerGroup();
   private poiLayer = L.layerGroup();
-
+ loadingPois$!: Observable<boolean>;
+  
   options: L.MapOptions = {
     layers: [
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -46,7 +47,9 @@ export class MapComponent implements OnInit, OnDestroy {
               private ngZone: NgZone,
               private cdr: ChangeDetectorRef,
               public poiService: PoiService
-            ) {}
+            ) {
+                this.loadingPois$ = this.poiService.loadingPois$;
+            }
   
   public macDoIcon = L.icon({
     iconUrl: 'assets/mcdonalds.ico',
@@ -55,14 +58,8 @@ export class MapComponent implements OnInit, OnDestroy {
     popupAnchor: [0, -30]
   });
 
-  ngOnInit(): void {
-    // Supprimé pour l'ajout de ngx-leaflet
-    // this.map = L.map('map').setView([46.2276, 2.2137], 6);
-    //   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //   attribution: '&copy; OpenStreetMap contributors'
-    // }).addTo(this.map);  
-    // this.poiLayer.addTo(this.map);
-    // this.centerLayer.addTo(this.map);
+  ngOnInit(): void {   
+    // this.loadingPois$ = this.poiService.loadingPois$;
 
     this.poiStream.poi$.subscribe(pois => {
       // console.log('🍔 MAP RECEIVED POIS >>>', pois);

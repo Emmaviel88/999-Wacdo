@@ -25,6 +25,8 @@ export class CommuneListComponent {
   private suggestionsTrigger = new Subject<Commune[]>();
   selectedIndex = -1;
   selectedCoords: { lat: number; lon: number } | null = null;
+  
+  loadingPois$!: Observable<boolean>;
 
   center$!: Observable<{ lat: number; lon: number } | null>;
 
@@ -40,6 +42,7 @@ export class CommuneListComponent {
               private store: Store, 
               private poiStream: PoiStreamService, 
               private poiService: PoiService) {
+    this.loadingPois$ = this.poiService.loadingPois$;
     this.center$ = this.store.select(selectMapCenter); // 👈 ICI (AJOUT)
  
     const search$ = this.searchControl.valueChanges.pipe(
@@ -137,20 +140,30 @@ export class CommuneListComponent {
   //   });
   // }
   searchPOI(): void {
-    console.log('🔍 SEARCH CLICKED');
-
+    // console.log('🔍 SEARCH CLICKED');
+    
     if (!this.selectedCoords) {
       console.log('❌ NO COORDS');
       return;
     }
+    
+    // Affiche le spinner 'recherche en cours'
+    this.poiService.setLoading(true);
 
     const place = this.searchControl.value ?? ''; 
     // `${this.selectedCoords.lat},${this.selectedCoords.lon}`;
 
-    this.nominatim.searchMcDo(place, 10).subscribe(pois => {
-      console.log('🍔 POIS RECEIVED IN COMPONENT:', pois);
+    this.nominatim.searchMcDo(place, 10).subscribe({
+      next: (pois) => {
+        console.log('🍔 POIS RECEIVED IN COMPONENT:', pois);
 
-      this.poiStream.emit(pois); // 👈 CRUCIAL
+        this.poiStream.emit(pois);
+        this.poiService.setLoading(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.poiService.setLoading(false);
+      }
     });
   }
 }

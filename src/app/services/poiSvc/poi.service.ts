@@ -8,8 +8,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 export class PoiService {
     private selectedPoiSubject = new BehaviorSubject<POI | null>(null);
-
     selectedPoi$ = this.selectedPoiSubject.asObservable();
+
+    private loadingPoisSubject = new BehaviorSubject<boolean>(false);
+    loadingPois$ = this.loadingPoisSubject.asObservable();
 
     selectPoi(poi: POI) {
         this.selectedPoiSubject.next(poi);
@@ -17,6 +19,11 @@ export class PoiService {
 
     clear() {
         this.selectedPoiSubject.next(null);
+    }
+
+    
+    setLoading(state: boolean): void {
+        this.loadingPoisSubject.next(state);
     }
 }
 
