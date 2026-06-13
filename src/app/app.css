@@ -50,7 +50,7 @@
   position: relative;
 
   width: 70vw;      /* 👈 limite largeur */
-  max-width: 900px; /* sécurité sur grand écran */
+  max-width: 700px; /* sécurité sur grand écran */
   min-width: 320px; /* sécurité mobile */
 
   height: 100%;
@@ -83,6 +83,8 @@ app-map {
 }
 
 .search-section {
+  left: 40%;
+  max-width: 600px;
   pointer-events: auto; /* pour pouvoir cliquer */
 }
 
@@ -100,7 +102,7 @@ app-map {
   }
 
   .map-wrapper {
-    width: 100vw;
+    width: 80vw;
   }
 }
 

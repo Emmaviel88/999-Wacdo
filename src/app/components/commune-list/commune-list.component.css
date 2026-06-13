@@ -5,6 +5,7 @@
 .commune-list li.active { background-color: #0c7cfd; color: white; }
 .commune-list label { margin-left: 0.7rem; }
 .no-suggestions { padding: 0.5rem; color: #ff0000; font-style: italic; }
+
 .search-wrapper {
   display: flex;
   align-items: center;
@@ -12,6 +13,7 @@
   background: rgba(255, 255, 255, 0.05);
   padding: 8px 12px;
   border-radius: 10px;
+  max-width: 550px;
 }
 .search-wrapper input {
   flex: 1;        /* prend tout l’espace dispo */

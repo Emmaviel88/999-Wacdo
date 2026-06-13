@@ -101,7 +101,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
-    this.map?.remove();
+    // this.map?.remove();
   }
 
   private addPoiMarkers(pois: POI[]): void {
