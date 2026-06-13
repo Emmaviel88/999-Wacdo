@@ -65,8 +65,8 @@ export class MapComponent implements OnInit, OnDestroy {
     // this.centerLayer.addTo(this.map);
 
     this.poiStream.poi$.subscribe(pois => {
-      console.log('🍔 MAP RECEIVED POIS >>>', pois);
-      console.log('MAP EXISTS:', !!this.map);
+      // console.log('🍔 MAP RECEIVED POIS >>>', pois);
+      // console.log('MAP EXISTS:', !!this.map);
 
       if(!this.map) return;
 
@@ -82,11 +82,11 @@ export class MapComponent implements OnInit, OnDestroy {
       }
 
       if (!center) {
-        console.log('🧹 CLEAR MARKER');
+        // console.log('🧹 CLEAR MARKER');
         this.centerLayer.clearLayers();
         return;
       }
-      console.log('🚀 CENTERING MAP');
+      // console.log('🚀 CENTERING MAP');
       this.centerMapOnCoords(center);
     });
   }
@@ -170,9 +170,9 @@ export class MapComponent implements OnInit, OnDestroy {
       this.poiService.selectPoi(poi);
       this.cdr.detectChanges();
 
-      this.poiService.selectedPoi$.subscribe(poi => {
-        console.log('MAP SERVICE VALUE', poi);
-    });
+      // this.poiService.selectedPoi$.subscribe(poi => {
+      //   console.log('MAP SERVICE VALUE', poi);
+      // });
   }
 
   // Ajouté pour ngx-leaflet
